@@ -20,7 +20,7 @@ func main() {
 
 	log := loadLogger(cfg.Env) // инициализация логера
 
-	log.Info("Start app on port:", slog.Any("grpc", cfg.GRPC.Port))
+	log.Info("Запуск приложения на порту:", slog.Any("grpc", cfg.GRPC.Port))
 
 	application := app.New(log, cfg.GRPC.Port, cfg.StoragePath, cfg.TokenTTL) // инициализация нового auth gRPC сервера
 
@@ -42,6 +42,7 @@ func main() {
 	application.GRPCServer.Stop()
 
 	log.Info("Работа приложения была завершена")
+
 	// TODO: запустить gRPC-сервер приложения
 }
 
