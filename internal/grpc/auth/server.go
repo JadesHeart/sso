@@ -3,7 +3,15 @@ package auth
 import (
 	"context"
 	ssov1 "github.com/JadesHeart/protos/gen/go/sso"
+	"github.com/go-playground/validator"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+)
+
+const (
+	validatorKey = "validatorKey" // TODO: вынести эту константу куда-то там
+	emptyValue   = 0
 )
 
 // ServerAPI структура обрабатывающая входящие запросы
@@ -19,6 +27,20 @@ func Register(grpc *grpc.Server) {
 
 // Login todo:описать метод
 func (s *serverAPI) Login(ctx context.Context, req *ssov1.LoginRequest) (*ssov1.LoginResponse, error) {
+	// достаём валидатор из контекста
+	v, ok := ctx.Value(validatorKey).(*validator.Validate)
+	if !ok {
+		return nil, status.Error(codes.Internal, "не удалось получить validator")
+	}
+	// Проверяем email на валидность
+	if err := v.Var(req.GetEmail(), "required,email"); err != nil {
+		return nil, status.Error(codes.InvalidArgument, "email не валидна")
+	}
+	// Проверяем AppId на валидность
+	if req.GetAppId() == emptyValue {
+		return nil, status.Error(codes.InvalidArgument, "app_id не валиден")
+	}
+
 	return &ssov1.LoginResponse{Token: "token123456"}, nil
 }
 
