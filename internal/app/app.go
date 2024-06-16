@@ -6,10 +6,6 @@ import (
 	"time"
 )
 
-const (
-	opRun = "grpcApp.Run"
-)
-
 type App struct {
 	GRPCServer *grpcapp.App
 }

@@ -19,7 +19,7 @@ func Register(grpc *grpc.Server) {
 
 // Login todo:описать метод
 func (s *serverAPI) Login(ctx context.Context, req *ssov1.LoginRequest) (*ssov1.LoginResponse, error) {
-	panic("implement me ") // пока что ставим заглужки, чтобы нормально имплементировать методы для удобного дебага
+	return &ssov1.LoginResponse{Token: "token123456"}, nil
 }
 
 // Register todo:описать метод
