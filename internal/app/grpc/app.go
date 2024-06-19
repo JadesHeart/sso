@@ -21,7 +21,6 @@ type App struct {
 	port       int
 }
 
-// New конструктор сервера нового gRPC приложения
 func New(
 	log *slog.Logger,
 	authService auth.Auth,
@@ -39,14 +38,12 @@ func New(
 	}
 }
 
-// MustRun в случае НЕзапуска сервера паникует
 func (a *App) MustRun() {
 	if err := a.Run(); err != nil {
 		panic(err)
 	}
 }
 
-// Run запускает сервер
 func (a *App) Run() error {
 	log := a.log.With(slog.String("op", opRun), slog.Int("port", a.port))
 
@@ -65,7 +62,6 @@ func (a *App) Run() error {
 	return nil
 }
 
-// Stop останавливает gRPC сервер
 func (a *App) Stop() {
 	a.log.With(slog.String("op", opStop)).
 		Info("Остановка gRPC сервера", slog.Int("port", a.port))

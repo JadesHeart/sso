@@ -33,8 +33,8 @@ func main() {
 
 	log.Info("Остановка работы приложения", slog.String("сигнал ОС", sign.String()))
 
-	// TODO: сделать такой же grace full shot down для базы данных, в виде приложения
 	application.GRPCServer.Stop()
+	application.StorageApp.Storage.Stop()
 
 	log.Info("Работа приложения была завершена")
 }

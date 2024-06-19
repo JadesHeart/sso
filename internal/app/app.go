@@ -8,8 +8,13 @@ import (
 	"time"
 )
 
+type StorageApp struct {
+	Storage *postgres.Storage
+}
+
 type App struct {
 	GRPCServer *grpcapp.App
+	StorageApp *StorageApp
 }
 
 func New(log *slog.Logger, grpcPort int, storagePath string, tokenTTL time.Duration) *App {
@@ -23,5 +28,8 @@ func New(log *slog.Logger, grpcPort int, storagePath string, tokenTTL time.Durat
 	grpcApp := grpcapp.New(log, *authService, grpcPort)
 	return &App{
 		GRPCServer: grpcApp,
+		StorageApp: &StorageApp{
+			Storage: storage,
+		},
 	}
 }
