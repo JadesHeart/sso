@@ -37,8 +37,6 @@ func main() {
 	application.GRPCServer.Stop()
 
 	log.Info("Работа приложения была завершена")
-
-	// TODO: запустить gRPC-сервер приложения
 }
 
 func loadLogger(loggerLevel string) *slog.Logger {
