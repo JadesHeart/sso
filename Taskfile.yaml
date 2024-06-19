@@ -1,0 +1,9 @@
+version: "3"
+
+tasks:
+  generate:
+    aliases:
+      - gen
+    desc: "Generate migrate with lib 'migrate'"
+    cmds:
+      - migrate -path migrations -database "postgres://postgres:lillol000@localhost:5432/sso?sslmode=disable" up

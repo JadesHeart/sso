@@ -1,57 +1,60 @@
 package main
 
 import (
-	"errors"
 	"flag"
-	"fmt"
-
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
+	"log"
 )
 
-func main() {
-	var storageURL, migrationsPath, migrationsTable string
+var (
+	migrationsPath string
+	dbURL          string
+)
 
-	flag.StringVar(&storageURL, "storage-url", "", "PostgreSQL connection URL")
-	flag.StringVar(&migrationsPath, "migrations-path", "", "Path to migrations")
-	flag.StringVar(&migrationsTable, "migrations-table", "migrations", "Name of migrations table")
+func init() {
+	flag.StringVar(&migrationsPath, "migrations-path", "file://migrations", "Path to migration files")
+	flag.StringVar(&dbURL, "db-url", "", "URL to PostgreSQL database")
 	flag.Parse()
+}
 
-	if storageURL == "" {
-		panic("storage-url is required")
-	}
-	if migrationsPath == "" {
-		panic("migrations-path is required")
+func main() {
+	args := flag.Args()
+
+	switch {
+	case len(args) < 1:
+		log.Fatal("You must specify a migrate command (up, down, goto, etc)")
 	}
 
-	m, err := migrate.New(
-		"file://"+migrationsPath,
-		storageURL,
-	)
+	m, err := migrate.New(migrationsPath, dbURL)
 	if err != nil {
-		panic(err)
+		log.Fatalf("Failed to initialize migrate: %v", err)
 	}
+	defer m.Close()
 
-	if err := m.Up(); err != nil {
-		if errors.Is(err, migrate.ErrNoChange) {
-			fmt.Println("no migrations to apply")
-			return
+	// Parse the migrate command
+	command := args[0]
+	switch command {
+	case "up":
+		err = m.Up()
+	case "down":
+		err = m.Down()
+
+	case "version":
+		version, dirty, err := m.Version()
+		if err != nil {
+			log.Fatalf("Failed to get migration version: %v", err)
 		}
-		panic(err)
+		log.Printf("Current version: %d, Dirty: %v", version, dirty)
+		return
+	default:
+		log.Fatalf("Unknown migrate command: %s", command)
 	}
 
-	fmt.Println("migrations applied")
-}
+	if err != nil {
+		log.Fatalf("migrate %s: %v", command, err)
+	}
 
-type Log struct {
-	verbose bool
-}
-
-func (l *Log) Printf(format string, v ...interface{}) {
-	fmt.Printf(format, v...)
-}
-
-func (l *Log) Verbose() bool {
-	return false
+	log.Printf("migrate %s completed", command)
 }
