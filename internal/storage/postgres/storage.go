@@ -35,7 +35,6 @@ func (s *Storage) Stop() error {
 	return s.db.Close()
 }
 
-// SaveUser saves user to db.
 func (s *Storage) SaveUser(ctx context.Context, email string, passHash []byte) (int64, error) {
 	const op = "storage.postgres.SaveUser"
 

@@ -7,6 +7,7 @@ import (
 	"net"
 	authgrpc "sso/internal/grpc/auth"
 	"sso/internal/interceptors"
+	"sso/internal/services/auth"
 )
 
 const (
@@ -14,7 +15,6 @@ const (
 	opStop = "grpcApp.Stop"
 )
 
-// App TODO: описать структуру
 type App struct {
 	log        *slog.Logger
 	gRPCServer *grpc.Server
@@ -22,11 +22,16 @@ type App struct {
 }
 
 // New конструктор сервера нового gRPC приложения
-func New(log *slog.Logger, port int) *App {
+func New(
+	log *slog.Logger,
+	authService auth.Auth,
+	port int,
+
+) *App {
 	gRPCServer := grpc.NewServer(
 		grpc.UnaryInterceptor(interceptors.UnaryServerInterceptorValidate),
 	)
-	authgrpc.Register(gRPCServer, nil)
+	authgrpc.Register(gRPCServer, &authService)
 	return &App{
 		log:        log,
 		gRPCServer: gRPCServer,

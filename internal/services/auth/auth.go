@@ -141,7 +141,7 @@ func (a *Auth) RegisterNewUser(
 	return id, nil
 }
 
-func (a *Auth) IsAdmin(ctx context.Context, userID int) (bool, error) {
+func (a *Auth) IsAdmin(ctx context.Context, userID int64) (bool, error) {
 	log := a.log.With(
 		slog.Any("op", isAdminPath),
 	)
