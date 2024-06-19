@@ -21,6 +21,8 @@ const (
 
 var (
 	ErrInvalidCredentials = errors.New("invalid credentials")
+	ErrInvalidAppId       = errors.New("invalid app id")
+	UserAlreadyExist      = errors.New("user already exist")
 )
 
 type Auth struct {
@@ -125,6 +127,12 @@ func (a *Auth) RegisterNewUser(
 
 	id, err := a.usrSaver.SaveUser(ctx, email, passHash)
 	if err != nil {
+		if errors.Is(err, storage.ErrUserExists) {
+			log.Warn("пользователь уже существует", sl.Err(err))
+
+			return 0, fmt.Errorf("%s: %w", regUserPath, UserAlreadyExist)
+		}
+
 		log.Error("не удалось сохранить юзера", sl.Err(err))
 
 		return 0, fmt.Errorf("%s: %w", regUserPath, err)
@@ -140,6 +148,11 @@ func (a *Auth) IsAdmin(ctx context.Context, userID int) (bool, error) {
 
 	isAdmin, err := a.usrProvider.IsAdmin(ctx, int64(userID))
 	if err != nil {
+		if errors.Is(err, storage.ErrAppNotFound) {
+			log.Warn("пользователь не найден", sl.Err(err))
+
+			return false, fmt.Errorf("%s: %w", isAdminPath, ErrInvalidAppId)
+		}
 		return false, fmt.Errorf("%s: %w", isAdminPath, err)
 	}
 
