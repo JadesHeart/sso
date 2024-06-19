@@ -19,24 +19,19 @@ type GRPC struct {
 	Timeout time.Duration `yaml:"timeout"`
 }
 
-/*
-MustLoad Функция возвращает значение конфига
-если не получается по какой-то причине нормально его создать то дропает панику
-*/
 func MustLoad() *Config {
 	configPath := fetchConfigPath()
 	if configPath == "" {
 		panic("путь до конфига пустой")
 	}
 
-	if _, err := os.Stat(configPath); os.IsNotExist(err) { // проверяем существует ли файл с конфигом
+	if _, err := os.Stat(configPath); os.IsNotExist(err) {
 		panic("конфигурационный файл не существует: " + configPath)
 	}
 
 	var config Config
 
 	// с помощью библиотеки "github.com/ilyakaznacheev/cleanenv" читаем конфиг в переменную config
-	// если не выходит, то выдаём панику
 	if err := cleanenv.ReadConfig(configPath, &config); err != nil {
 		panic("не удалось прочитать конфиг: " + err.Error())
 	}
@@ -44,7 +39,6 @@ func MustLoad() *Config {
 	return &config
 }
 
-// Функция парсит путь до конфига сначала из флага и если не выходит из переменных окружения
 func fetchConfigPath() string {
 	var configPath string
 

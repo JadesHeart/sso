@@ -25,6 +25,5 @@ func UnaryServerInterceptorValidate(
 		}
 
 	}
-
 	return handler(ctx, req)
 }
