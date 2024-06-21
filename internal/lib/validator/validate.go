@@ -7,9 +7,9 @@ import (
 )
 
 const (
-	EmailInvalid    = "Email не валидна"
-	PasswordInvalid = "Не валидный пароль"
-	AppIdInvalid    = "Не валидный app_id"
+	EmailInvalid    = "invalid email"
+	PasswordInvalid = "invalid password"
+	AppIdInvalid    = "invalid app_id"
 )
 
 const (
@@ -57,7 +57,6 @@ func ValidateAppId(value interface{}) error {
 	if !ok {
 		return status.Error(codes.InvalidArgument, AppIdInvalid)
 	}
-
 	if appId == emptyValue {
 		return status.Error(codes.InvalidArgument, AppIdInvalid)
 	}

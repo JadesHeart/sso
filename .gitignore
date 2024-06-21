@@ -1,3 +1,5 @@
 config/local.yaml
 .idea
 Taskfile.yaml
+config/local_tests.yaml
+TaskfileTests.yaml

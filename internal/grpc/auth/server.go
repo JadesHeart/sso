@@ -38,7 +38,7 @@ func (s *serverAPI) Login(ctx context.Context, req *ssov1.LoginRequest) (*ssov1.
 	token, err := s.auth.Login(ctx, req.GetEmail(), req.GetPassword(), int(req.GetAppId()))
 	if err != nil {
 		if errors.Is(err, auth.ErrInvalidCredentials) {
-			return nil, status.Error(codes.InvalidArgument, "не валидная почта или пароль")
+			return nil, status.Error(codes.InvalidArgument, "не верный логин или пароль")
 		}
 		return nil, status.Error(codes.Internal, "внутренняя ошибка")
 	}

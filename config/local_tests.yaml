@@ -1,0 +1,6 @@
+env: "local"
+storage_path: "postgres://postgres:lillol000@localhost:5432/sso_test?sslmode=disable"
+token_ttl: 1h
+grpc:
+  port: 44044
+  timeout: 5h
